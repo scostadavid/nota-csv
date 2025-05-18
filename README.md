@@ -73,14 +73,16 @@ curl -X POST \
 
 ### Architecture
 
+```mermaid
 graph TD
-  A[Client] -->|Upload XML| B(API Gateway)
-  B --> C[Lambda]
-  C -->|Store files| D[S3 Bucket]
-  C -->|Queue job| E[SQS]
-  E --> F[Processor Lambda]
-  F -->|Convert| G[CSV in S3]
-  F -->|Update| H[DynamoDB]
+    A[Client] -->|Upload XML| B(API Gateway)
+    B --> C[Upload Lambda]
+    C -->|Store| D[S3 Bucket]
+    C -->|Queue| E[SQS]
+    E --> F[Process Lambda]
+    F -->|Convert| G[CSV]
+    F -->|Update| H[DynamoDB]
+```
 
 ## 📈 Roadmap
 
