@@ -1,0 +1,98 @@
+org: scostadavid
+app: nfe-app
+service: nfe
+
+custom:
+  dotenv:
+    path: .env
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  environment:
+    INCOMING_BUCKET: incoming-xml-bucket-dev-nfe
+    PROCESSED_BUCKET: processed-csv-bucket-dev-nfe
+    TABLE_NAME: processing-status-table-v2
+    QUEUE_URL:
+      Ref: ProcessingQueue
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:GetObject
+            - s3:ListBucket
+          Resource:
+            - !Sub arn:aws:s3:::incoming-xml-bucket-${sls:stage}-nfe
+            - !Sub arn:aws:s3:::incoming-xml-bucket-${sls:stage}-nfe/*
+        - Effect: Allow
+          Action:
+            - sqs:SendMessage
+          Resource:
+            - Fn::GetAtt: [ProcessingQueue, Arn]
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+            - dynamodb:UpdateItem
+          Resource:
+            - Fn::GetAtt: [ProcessingStatusTable, Arn]
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+          Resource:
+            - !Sub arn:aws:s3:::processed-csv-bucket-${sls:stage}-nfe
+            - !Sub arn:aws:s3:::processed-csv-bucket-${sls:stage}-nfe/*
+
+
+functions:
+  upload:
+    handler: handlers/upload.index
+    events:
+      - httpApi:
+          path: /upload
+          method: post
+
+  processQueue:
+    handler: handlers/processQueue.index
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - ProcessingQueue
+              - Arn
+
+resources:
+  Resources:
+    IncomingBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: incoming-xml-bucket-${sls:stage}-nfe
+
+    ProcessedBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: processed-csv-bucket-${sls:stage}-nfe
+
+    ProcessingQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: xml-processing-queue
+
+    ProcessingStatusTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: processing-status-table-v2
+        AttributeDefinitions:
+          - AttributeName: email
+            AttributeType: S
+          - AttributeName: createdAt
+            AttributeType: N
+        KeySchema:
+          - AttributeName: email
+            KeyType: HASH
+          - AttributeName: createdAt
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+

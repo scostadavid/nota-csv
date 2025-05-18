@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NotaCSV – Converta XML em CSV</title>
+  <meta name="description" content="Transforme arquivos XML de NFS-e em planilhas CSV automaticamente. Envio simples, recebimento rápido por e-mail.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .bg-bubbles {
+      background: radial-gradient(circle at 10% 20%, rgba(99,102,241,0.1) 0%, transparent 40%),
+                  radial-gradient(circle at 90% 80%, rgba(99,102,241,0.05) 0%, transparent 50%);
+    }
+  </style>
+</head>
+<body class="bg-gray-50 bg-bubbles text-gray-800 min-h-screen flex flex-col">
+
+  <!-- Hero Section -->
+  <section class="flex flex-col md:flex-row items-center justify-between max-w-7xl mx-auto px-6 py-24 gap-16">
+    <!-- Text Content -->
+    <div class="md:w-1/2">
+      <h1 class="text-4xl sm:text-5xl font-bold text-indigo-600 leading-tight">Transforme notas fiscais em planilha em segundos</h1>
+      <p class="mt-6 text-lg text-gray-600 max-w-lg">
+        Com o <strong>NotaCSV</strong>, você envia até 5 arquivos XML de NFS-e e recebe os dados organizados por e-mail em uma planilha CSV pronta para usar.
+      </p>
+      <ul class="mt-6 space-y-2 text-gray-700 text-sm">
+        <li>✅ Sem cadastro</li>
+        <li>✅ Grátis durante o beta</li>
+        <li>✅ Resultado direto na sua caixa de entrada</li>
+      </ul>
+    </div>
+
+    <!-- Upload Form -->
+    <div class="md:w-1/2 bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">Direto ao ponto</h2>
+      <form id="uploadForm" class="space-y-4">
+        <div>
+          <label for="email" class="block text-sm font-medium">Seu e-mail</label>
+          <input type="email" id="email" name="email" required placeholder="seumelhoremail@provedor.com"
+            class="mt-1 w-full text-sm border border-gray-300 rounded-lg p-2 bg-white" />
+        </div>
+        <div>
+          <label for="files" class="block text-sm font-medium">Arquivos XML (até 5)</label>
+          <input type="file" id="files" name="files" accept=".xml" multiple required
+            class="mt-1 w-full text-sm border border-gray-300 rounded-lg p-2 bg-white" />
+        </div>
+        <button type="submit"
+          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg shadow transition">
+          Enviar & Converter
+        </button>
+      </form>
+      <div id="message" class="text-sm text-center mt-4"></div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="text-center text-sm text-gray-400 py-8">
+    © 2025 NotaCSV <a href="https://scostadavid.dev" rel="noreferrer noopener" target="_blank">scostadavid</a>
+  </footer>
+
+  <script>
+    const form = document.getElementById('uploadForm');
+    const message = document.getElementById('message');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = form.email.value;
+      const files = form.files.files;
+
+      if (!email || files.length === 0 || files.length > 5) {
+        message.textContent = "Insira um e-mail válido e até 5 arquivos XML.";
+        message.className = "text-red-600";
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("email", email);
+      for (let i = 0; i < files.length; i++) {
+        formData.append("files", files[i]);
+      }
+
+      message.textContent = "Enviando arquivos...";
+      message.className = "text-gray-600";
+
+      try {
+        const res = await fetch("https://SEU-ENDPOINT/upload", {
+          method: "POST",
+          body: formData
+        });
+
+        if (!res.ok) throw new Error();
+
+        message.textContent = "Sucesso! Você receberá o CSV por e-mail.";
+        message.className = "text-green-600";
+        form.reset();
+      } catch (err) {
+        message.textContent = "Erro ao enviar. Tente novamente.";
+        message.className = "text-red-600";
+      }
+    });
+  </script>
+</body>
+</html>

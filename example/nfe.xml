@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<NFSe versao="1.00" xmlns="http://www.sped.fazenda.gov.br/nfse">
+  <infNFSe Id="NFS35558022299999999000148000000000012345012257655103">
+    <xLocEmi>São Paulo</xLocEmi>
+    <xLocPrestacao>São Paulo</xLocPrestacao>
+    <nNFSe>12345</nNFSe>
+    <cLocIncid>3550308</cLocIncid>
+    <xLocIncid>São Paulo</xLocIncid>
+    <xTribNac>Consultoria em TI</xTribNac>
+    <verAplic>EmissorNFSe_2.1.0</verAplic>
+    <ambGer>2</ambGer>
+    <tpEmis>1</tpEmis>
+    <procEmi>0</procEmi>
+    <cStat>100</cStat>
+    <dhProc>2025-05-20T14:30:00-03:00</dhProc>
+    <nDFSe>54321</nDFSe>
+    <emit>
+      <CNPJ>12345678000190</CNPJ>
+      <xNome>TECH SOLUTIONS CONSULTORIA LTDA</xNome>
+      <enderNac>
+        <xLgr>AVENIDA PAULISTA</xLgr>
+        <nro>1000</nro>
+        <xBairro>BELA VISTA</xBairro>
+        <cMun>3550308</cMun>
+        <UF>SP</UF>
+        <CEP>01310000</CEP>
+      </enderNac>
+      <fone>1122223333</fone>
+      <email>contato@techsolutions.com.br</email>
+    </emit>
+    <valores>
+      <vTotalRet>0.00</vTotalRet>
+      <vLiq>8500.00</vLiq>
+    </valores>
+    <DPS versao="1.00" xmlns="http://www.sped.fazenda.gov.br/nfse">
+      <infDPS Id="DPS355030812345678000148009000000000123456">
+        <tpAmb>1</tpAmb>
+        <dhEmi>2025-05-20T14:25:00-03:00</dhEmi>
+        <verAplic>EmissorNFSe_2.1.0</verAplic>
+        <serie>1</serie>
+        <nDPS>9876</nDPS>
+        <dCompet>2025-05-20</dCompet>
+        <tpEmit>1</tpEmit>
+        <cLocEmi>3550308</cLocEmi>
+        <prest>
+          <CNPJ>12345678000190</CNPJ>
+          <fone>1122223333</fone>
+          <email>contato@techsolutions.com.br</email>
+          <regTrib>
+            <opSimpNac>1</opSimpNac>
+            <regEspTrib>0</regEspTrib>
+          </regTrib>
+        </prest>
+        <toma>
+          <CNPJ>98765432000101</CNPJ>
+          <xNome>ACME CORPORATION BRASIL LTDA</xNome>
+          <end>
+            <endNac>
+              <cMun>3550308</cMun>
+              <CEP>04543000</CEP>
+            </endNac>
+            <xLgr>RUA FICTÍCIA</xLgr>
+            <nro>200</nro>
+            <xCpl>ANDAR 10</xCpl>
+            <xBairro>ITAM BIBI</xBairro>
+          </end>
+        </toma>
+        <serv>
+          <locPrest>
+            <cLocPrestacao>3550308</cLocPrestacao>
+          </locPrest>
+          <cServ>
+            <cTribNac>0107</cTribNac>
+            <xDescServ>Consultoria especializada em desenvolvimento de software</xDescServ>
+          </cServ>
+        </serv>
+        <valores>
+          <vServPrest>
+            <vServ>8500.00</vServ>
+          </vServPrest>
+          <trib>
+            <tribMun>
+              <tribISSQN>1</tribISSQN>
+              <tpRetISSQN>1</tpRetISSQN>
+            </tribMun>
+            <totTrib>
+              <indTotTrib>0</indTotTrib>
+            </totTrib>
+          </trib>
+        </valores>
+      </infDPS>
+    </DPS>
+  </infNFSe>
+  <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+    <!-- Assinatura digital fictícia - removida para exemplo -->
+  </Signature>
+</NFSe>

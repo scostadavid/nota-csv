@@ -1,0 +1,19 @@
+{
+  "name": "nfe",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "develop": "npx serverless dev",
+    "deploy": "npx serverless deploy"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.585.0",
+    "@aws-sdk/lib-dynamodb": "^3.585.0",
+    "aws-sdk": "^2.1692.0",
+    "busboy": "^1.6.0",
+    "xml2js": "^0.6.2"
+  },
+  "devDependencies": {
+    "serverless-dotenv-plugin": "^6.0.0"
+  }
+}
