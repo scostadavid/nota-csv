@@ -11,6 +11,7 @@
     "@aws-sdk/lib-dynamodb": "^3.585.0",
     "aws-sdk": "^2.1692.0",
     "busboy": "^1.6.0",
+    "serverless": "^3.40.0",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
