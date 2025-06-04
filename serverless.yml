@@ -48,14 +48,14 @@ provider:
 
 functions:
   upload:
-    handler: handlers/upload.index
+    handler: handlers/uploadNfeBatch.handler
     events:
       - httpApi:
           path: /upload
           method: post
 
   processQueue:
-    handler: handlers/processQueue.index
+    handler: handlers/processQueue.handler
     events:
       - sqs:
           arn:

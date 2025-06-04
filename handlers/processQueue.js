@@ -9,7 +9,7 @@ const PROCESSED_BUCKET = process.env.PROCESSED_BUCKET;
 
 const {parse, transformXmlToJson} = require('../lib/nfe');
 
-module.exports.index = async (event) => {
+module.exports.handler = async (event) => {
   for (const record of event.Records) {
     const { email, createdAt } = JSON.parse(record.body);
 
@@ -25,7 +25,6 @@ module.exports.index = async (event) => {
       
       for (const file of Item.filesUploaded) {
         const key = `uploads/${email}/${createdAt}_${file.filename}`;
-
         const xmlObject = await s3.getObject({
           Bucket: BUCKET,
           Key: key
