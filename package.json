@@ -4,17 +4,23 @@
   "description": "",
   "scripts": {
     "develop": "npx serverless dev",
-    "deploy": "npx serverless deploy"
+    "deploy": "npx serverless deploy",
+    "localstack:up": "docker compose up -d",
+    "localstack:down": "docker compose down",
+    "deploy:local": "serverless deploy --stage local",
+    "test:local": "node scripts/local-test.js",
+    "offline": "AWS_ENDPOINT_URL=http://localhost:4566 AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test AWS_REGION=us-east-1 serverless offline --stage local --httpPort 3000",
+    "front": "npx http-server . -p 8080 -c-1 --cors -o /index.html"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.585.0",
-    "@aws-sdk/lib-dynamodb": "^3.585.0",
     "aws-sdk": "^2.1692.0",
     "busboy": "^1.6.0",
     "serverless": "^3.40.0",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
-    "serverless-dotenv-plugin": "^6.0.0"
+    "serverless-dotenv-plugin": "^6.0.0",
+    "serverless-localstack": "^1.3.1",
+    "serverless-offline": "^13.10.0"
   }
 }

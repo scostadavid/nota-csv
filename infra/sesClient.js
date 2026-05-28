@@ -1,3 +1,3 @@
 const AWS = require('aws-sdk');
 const { clientOptions } = require('./config');
-exports.dynamo = new AWS.DynamoDB.DocumentClient(clientOptions);
+exports.ses = new AWS.SES(clientOptions);

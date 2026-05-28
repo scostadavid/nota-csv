@@ -1,2 +1,3 @@
 const AWS = require('aws-sdk');
-exports.s3 = new AWS.S3();
+const { clientOptions } = require('./config');
+exports.s3 = new AWS.S3(clientOptions);

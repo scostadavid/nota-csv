@@ -13,7 +13,7 @@ exports.uploadNfeBatch = async (email, files) => {
     files.map(({ filename, fileBuffer }) =>
       s3.putObject({
         Bucket: BUCKET,
-        Key: `uploads/${email}/${createdAt}_${filename.filename}`,
+        Key: `uploads/${email}/${createdAt}_${filename}`,
         Body: fileBuffer,
         ContentType: 'application/xml',
       }).promise()

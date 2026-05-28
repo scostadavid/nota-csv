@@ -1,2 +1,3 @@
 const AWS = require('aws-sdk');
-exports.sqs = new AWS.SQS();
+const { clientOptions } = require('./config');
+exports.sqs = new AWS.SQS(clientOptions);

@@ -17,61 +17,126 @@
 </head>
 <body class="bg-gray-50 bg-bubbles text-gray-800 min-h-screen flex flex-col">
 
-  <!-- Hero Section -->
-  <section class="flex flex-col md:flex-row items-center justify-between max-w-7xl mx-auto px-6 py-24 gap-16">
-    <!-- Text Content -->
-    <div class="md:w-1/2">
-      <h1 class="text-4xl sm:text-5xl font-bold text-indigo-600 leading-tight">Transforme notas fiscais em planilha em segundos</h1>
-      <p class="mt-6 text-lg text-gray-600 max-w-lg">
-        Com o <strong>NotaCSV</strong>, você envia até 5 arquivos XML de NFS-e e recebe os dados organizados por e-mail em uma planilha CSV pronta para usar.
-      </p>
-      <ul class="mt-6 space-y-2 text-gray-700 text-sm">
-        <li>✅ Sem cadastro</li>
-        <li>✅ Grátis durante o beta</li>
-        <li>✅ Resultado direto na sua caixa de entrada</li>
-      </ul>
-    </div>
+  <main class="flex-1 flex items-center justify-center px-6 py-12">
+    <div class="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
 
-    <!-- Upload Form -->
-    <div class="md:w-1/2 bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
-      <h2 class="text-xl font-semibold text-gray-800 mb-4">Direto ao ponto</h2>
-      <form id="uploadForm" class="space-y-4">
-        <div>
-          <label for="email" class="block text-sm font-medium">Seu e-mail</label>
-          <input type="email" id="email" name="email" required placeholder="seumelhoremail@provedor.com"
-            class="mt-1 w-full text-sm border border-gray-300 rounded-lg p-2 bg-white" />
-        </div>
-        <div>
-          <label for="files" class="block text-sm font-medium">Arquivos XML (até 5)</label>
-          <input type="file" id="files" name="files" accept=".xml" multiple required
-            class="mt-1 w-full text-sm border border-gray-300 rounded-lg p-2 bg-white" />
-        </div>
-        <button type="submit"
-          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg shadow transition">
-          Enviar & Converter
-        </button>
-      </form>
-      <div id="message" class="text-sm text-center mt-4"></div>
-    </div>
-  </section>
+      <!-- Signup: get an API key -->
+      <div id="signupSection">
+        <form id="signupForm" class="space-y-4">
+          <div>
+            <label for="signupEmail" class="block text-sm font-medium">Seu e-mail</label>
+            <input type="email" id="signupEmail" name="signupEmail" required placeholder="seumelhoremail@provedor.com"
+              class="mt-1 w-full text-sm border border-gray-300 rounded-lg p-2 bg-white" />
+          </div>
+          <button type="submit"
+            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg shadow transition">
+            Gerar chave
+          </button>
+        </form>
+        <div id="signupMessage" class="text-sm text-center mt-4"></div>
+      </div>
 
-  <!-- Footer -->
-  <footer class="text-center text-sm text-gray-400 py-8">
-    © 2025 NotaCSV <a href="https://scostadavid.dev" rel="noreferrer noopener" target="_blank">scostadavid</a>
-  </footer>
+      <!-- Upload: send XML files -->
+      <div id="uploadSection" class="hidden">
+        <p class="text-xs font-mono text-gray-700 break-all bg-gray-100 rounded p-2 mb-1" id="apiKeyDisplay"></p>
+        <button type="button" id="resetKey" class="text-xs text-indigo-600 hover:underline mb-4">Trocar de chave</button>
+        <form id="uploadForm" class="space-y-4">
+          <div>
+            <label for="email" class="block text-sm font-medium">E-mail para receber o CSV</label>
+            <input type="email" id="email" name="email" required placeholder="seumelhoremail@provedor.com"
+              class="mt-1 w-full text-sm border border-gray-300 rounded-lg p-2 bg-white" />
+          </div>
+          <div>
+            <label for="files" class="block text-sm font-medium">Arquivos XML (até 5)</label>
+            <input type="file" id="files" name="files" accept=".xml" multiple required
+              class="mt-1 w-full text-sm border border-gray-300 rounded-lg p-2 bg-white" />
+          </div>
+          <button type="submit"
+            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg shadow transition">
+            Enviar & Converter
+          </button>
+        </form>
+        <div id="message" class="text-sm text-center mt-4"></div>
+      </div>
+
+    </div>
+  </main>
 
   <script>
-    const form = document.getElementById('uploadForm');
-    const message = document.getElementById('message');
+    // Aponte para a URL da sua API.
+    //   - Local com serverless-offline: http://localhost:3000
+    //   - AWS dev/prod: a URL exibida no deploy
+    const API_BASE_URL = "http://localhost:3000";
+    const API_KEY_STORAGE = "notacsv_api_key";
 
-    form.addEventListener('submit', async (e) => {
+    const signupSection = document.getElementById('signupSection');
+    const uploadSection = document.getElementById('uploadSection');
+    const signupForm = document.getElementById('signupForm');
+    const signupMessage = document.getElementById('signupMessage');
+    const uploadForm = document.getElementById('uploadForm');
+    const message = document.getElementById('message');
+    const apiKeyDisplay = document.getElementById('apiKeyDisplay');
+    const resetKey = document.getElementById('resetKey');
+
+    function showUpload(apiKey) {
+      apiKeyDisplay.textContent = apiKey;
+      signupSection.classList.add('hidden');
+      uploadSection.classList.remove('hidden');
+    }
+
+    function showSignup() {
+      uploadSection.classList.add('hidden');
+      signupSection.classList.remove('hidden');
+    }
+
+    // Restaura a sessão se já houver chave salva.
+    const storedKey = localStorage.getItem(API_KEY_STORAGE);
+    if (storedKey) showUpload(storedKey);
+
+    resetKey.addEventListener('click', () => {
+      localStorage.removeItem(API_KEY_STORAGE);
+      showSignup();
+    });
+
+    signupForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const email = form.email.value;
-      const files = form.files.files;
+      const email = signupForm.signupEmail.value;
+      signupMessage.textContent = "Gerando chave...";
+      signupMessage.className = "text-sm text-center mt-4 text-gray-600";
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/signup`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email })
+        });
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) throw new Error(data.message || "Erro ao gerar a chave.");
+
+        localStorage.setItem(API_KEY_STORAGE, data.apiKey);
+        signupMessage.textContent = "";
+        showUpload(data.apiKey);
+      } catch (err) {
+        signupMessage.textContent = err.message || "Erro ao gerar a chave. Tente novamente.";
+        signupMessage.className = "text-sm text-center mt-4 text-red-600";
+      }
+    });
+
+    uploadForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const apiKey = localStorage.getItem(API_KEY_STORAGE);
+      if (!apiKey) {
+        showSignup();
+        return;
+      }
+
+      const email = uploadForm.email.value;
+      const files = uploadForm.files.files;
 
       if (!email || files.length === 0 || files.length > 5) {
         message.textContent = "Insira um e-mail válido e até 5 arquivos XML.";
-        message.className = "text-red-600";
+        message.className = "text-sm text-center mt-4 text-red-600";
         return;
       }
 
@@ -82,22 +147,36 @@
       }
 
       message.textContent = "Enviando arquivos...";
-      message.className = "text-gray-600";
+      message.className = "text-sm text-center mt-4 text-gray-600";
 
       try {
-        const res = await fetch("https://SEU-ENDPOINT/upload", {
+        const res = await fetch(`${API_BASE_URL}/upload`, {
           method: "POST",
+          headers: { "x-api-key": apiKey },
           body: formData
         });
+        const data = await res.json().catch(() => ({}));
 
-        if (!res.ok) throw new Error();
+        if (res.status === 401 || res.status === 403) {
+          localStorage.removeItem(API_KEY_STORAGE);
+          message.textContent = "Sua chave de API é inválida. Gere uma nova.";
+          message.className = "text-sm text-center mt-4 text-red-600";
+          showSignup();
+          return;
+        }
+        if (res.status === 429) {
+          message.textContent = "Você atingiu o limite mensal de envios.";
+          message.className = "text-sm text-center mt-4 text-red-600";
+          return;
+        }
+        if (!res.ok) throw new Error(data.message);
 
         message.textContent = "Sucesso! Você receberá o CSV por e-mail.";
-        message.className = "text-green-600";
-        form.reset();
+        message.className = "text-sm text-center mt-4 text-green-600";
+        uploadForm.reset();
       } catch (err) {
         message.textContent = "Erro ao enviar. Tente novamente.";
-        message.className = "text-red-600";
+        message.className = "text-sm text-center mt-4 text-red-600";
       }
     });
   </script>
